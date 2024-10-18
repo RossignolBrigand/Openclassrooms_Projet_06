@@ -2,7 +2,8 @@ const express = require('express');
 
 const app = express();
 
-app.use((req, res) => {
+// Create any middleware like so
+app.use((req, res, next) => {
     res.json({ message: 'Hello World' });
 });
 
