@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 
 // Connect to MongoDB Database 
-mongoose.connect('mongodb+srv://thomaspineau93:Cowaf2jdd4MtPlpF@clusterprojet06.xcbj6.mongodb.net/?retryWrites=true&w=majority&appName=ClusterProjet06',
+mongoose.connect('mongodb+srv://thomaspineau93:crRdZJYsKjiQ4B62@cluster0.5n0xo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
     {
         useNewUrlParser: true,
         useUnifiedTopology: true

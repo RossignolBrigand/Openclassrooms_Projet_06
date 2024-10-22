@@ -1,7 +1,7 @@
-ClusterProjet06
+Cluster0
 
 Username: thomaspineau93
 
-Password: Cowaf2jdd4MtPlpF
+Password: crRdZJYsKjiQ4B62
 
-Connection String : 'mongodb+srv://thomaspineau93:Cowaf2jdd4MtPlpF@clusterprojet06.xcbj6.mongodb.net/?retryWrites=true&w=majority&appName=ClusterProjet06'
+Connection String : 'mongodb+srv://thomaspineau93:crRdZJYsKjiQ4B62@cluster0.5n0xo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
