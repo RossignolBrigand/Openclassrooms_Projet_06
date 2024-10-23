@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('./middleware/cors');
+const cors = require('cors');
 const app = express();
 
 const bookRoutes = require('./routes/book');
@@ -22,13 +22,13 @@ mongoose.connect('mongodb+srv://thomaspineau93:crRdZJYsKjiQ4B62@cluster0.5n0xo.m
 app.use(express.json());
 
 // Create a header for all requests and responses for our paths to help prevent CORS issues
-app.use(cors);
+app.use(cors());
 
 // Book Routes
 app.use('/api/books', bookRoutes);
 
 // Auth Routes
-app.use('api/auth', userRoutes);
+app.use('/api/auth', userRoutes);
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
