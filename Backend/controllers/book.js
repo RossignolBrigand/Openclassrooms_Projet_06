@@ -4,11 +4,17 @@ const Book = require('../models/Book');
 
 // POST a new Book / Auth required
 exports.createBook = (req, res, next) => {
+    const bookObject = JSON.parse(req.body.book);
+    delete bookObject._id;
+    delete bookObject._userId;
     const book = new Book({
-        ...req.body
+        ...bookObject,
+        userId: req.auth.userId,
+        imageUrl: `${req.protocol}://${req.get('host')}/uploads/images/${req.file.filename}`
     });
+    console.log(book)
     book.save()
-        .then(() => res.status(201).json({ book, message: String }))
+        .then(() => res.status(201).json({ book, message: 'Objet enregistré !' }))
         .catch(error => res.status(400).json({ error }));
 };
 
@@ -19,12 +25,16 @@ exports.rateBook = (req, res, next) => {
 
 // PUT Updates a specific Book from the provided ID / Auth required
 exports.updateBook = (req, res, next) => {
-
+    Book.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+        .then(() => res.status(200).json({ message: 'Objet modifié !' }))
+        .catch(error => res.status(400).json({ error }));
 };
 
 // DELETE Removes a specific Book from Database with the provided Id / Auth required
 exports.deleteBook = (req, res, next) => {
-
+    Book.deleteOne({ _id: req.params.id })
+        .then(() => res.status(200).json({ message: 'Objet supprimé !' }))
+        .catch(error => res.status(400).json({ error }));
 };
 
 // GET a specific Book, no Auth required
