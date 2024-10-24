@@ -1,4 +1,6 @@
 const Book = require('../models/Book');
+const fs = require('fs');
+
 
 //----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -25,9 +27,50 @@ exports.rateBook = (req, res, next) => {
 
 // PUT Updates a specific Book from the provided ID / Auth required
 exports.updateBook = (req, res, next) => {
-    Book.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-        .then(() => res.status(200).json({ message: 'Objet modifié !' }))
-        .catch(error => res.status(400).json({ error }));
+    console.log(req.body)
+    const bookId = req.params.id;
+    const bookObject = req.file ? {
+        ...JSON.parse(req.body.book),
+        imageUrl: `${req.protocol}://${req.get('host')}/uploads/images/${req.file.filename}`
+    } : { ...req.body };
+
+    delete bookObject._userId;
+    Book.findOne({ _id: bookId })
+        .then(book => {
+            if (book.userId != req.auth.userId) {
+                res.status(403).json({ message: 'Unauthorized request' });
+                return;
+            }
+
+            // Check if all fields in bookObject are the same as those in book
+            const isSame = Object.keys(bookObject).every(key => book[key] === bookObject[key]);
+
+            // Check if image needs to be updated
+            const isImageUpdated = req.file && req.file.filename !== book.imageUrl.split('/').pop();
+
+            if (isSame && !isImageUpdated) {
+                return res.status(200).json({ message: 'No changes detected' });
+            }
+
+            const oldImageUrl = book.imageUrl;
+            const oldImageFilename = oldImageUrl ? oldImageUrl.split('/images/')[1] : null;
+
+            Book.updateOne({ _id: bookId }, { ...bookObject, _id: bookId })
+                .then(() => {
+                    if (req.file && oldImageFilename) {
+                        fs.unlink(`uploads/images/${oldImageFilename}`, error => {
+                            if (error) {
+                                console.error({ error })
+                            }
+                            else { console.log('Old image deleted successfully !') }
+                        })
+                    }
+                    res.status(200).json({ message: 'Objet modifié !' })
+                })
+                .catch(error => res.status(401).json({ error }));
+
+        })
+        .catch((error) => res.status(400).json({ error }))
 };
 
 // DELETE Removes a specific Book from Database with the provided Id / Auth required
@@ -45,12 +88,16 @@ exports.getOneBook = (req, res, next) => {
 };
 
 // GET the three Books which have the bestRating on average
-exports.getBestBooks = (req, res, next) => {
-    Book.find()
-        .sort((a, b) => b.averageRating - a.averageRating)
-        .slice(0, 3)
-        .then(bestBooks => res.status(200).json({ bestBooks }))
-        .catch(error => res.status(400).json({ error }));
+exports.getTopBooks = async (req, res) => {
+    try {
+        const topBooks = await Book.find()
+            .sort({ averageRating: -1 })
+            .limit(3);
+
+        res.status(200).json(topBooks);
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving top books', error });
+    }
 };
 
 // GET all Books, no Auth required

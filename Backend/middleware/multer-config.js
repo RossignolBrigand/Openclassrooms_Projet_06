@@ -1,6 +1,5 @@
 const multer = require('multer');
 const sharp = require('sharp');
-const fs = require('fs');
 const path = require('path');
 
 const MIME_TYPES = {
@@ -32,7 +31,10 @@ module.exports = (req, res, next) => {
         }
 
         if (!req.file) {
-            return res.status(400).json({ error: 'No file uploaded' });
+            /// return res.status(400).json({ error: 'No file uploaded' });
+            // If no file is present (especially when updating content) multer should not be active and just pass to the next function
+            next();
+            return;
         }
 
         // Validate file type using MIME_TYPES
