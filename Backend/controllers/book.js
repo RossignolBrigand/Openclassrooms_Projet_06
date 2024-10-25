@@ -22,7 +22,38 @@ exports.createBook = (req, res, next) => {
 
 // POST a rating for a specific Book / Auth required
 exports.rateBook = (req, res, next) => {
+    const grade = Number(req.body.rating);
+    const userId = req.body.userId;
 
+    // Find the specified book
+    Book.findOne({ _id: req.params.id }).exec()
+        .then(book => {
+            if (!book) return res.status(404).json({ message: 'Error: book not found !' })
+
+            // Check if user has already rated the book
+            const existingRating = book.ratings.find(r => String(r.userId) === userId);
+            console.log(existingRating);
+            if (existingRating) {
+                return res.status(403).json({ message: 'You have already rated this book !' })
+            }
+
+            // Add the new rating 
+            const newRating = { userId: userId, grade: grade };
+            book.ratings.push(newRating);
+
+            // Update the average rating
+            const totalRating = book.ratings.reduce((sum, r) => sum + r.grade, 0);
+            const average = totalRating / book.ratings.length;
+
+            // Round down to 1 decimal place
+            book.averageRating = Math.floor(average * 10) / 10;
+
+            // Save the updated book 
+            Book.updateOne({ _id: book._id }, book).exec()
+                .then(() => res.status(200).json(book))
+                .catch((error) => res.status(400).json({ error }));
+        })
+        .catch(error => res.status(500).json({ error }))
 };
 
 // PUT Updates a specific Book from the provided ID / Auth required
