@@ -32,7 +32,6 @@ exports.rateBook = (req, res, next) => {
 
             // Check if user has already rated the book
             const existingRating = book.ratings.find(r => String(r.userId) === userId);
-            console.log(existingRating);
             if (existingRating) {
                 return res.status(403).json({ message: 'You have already rated this book !' })
             }
@@ -58,7 +57,6 @@ exports.rateBook = (req, res, next) => {
 
 // PUT Updates a specific Book from the provided ID / Auth required
 exports.updateBook = (req, res, next) => {
-    console.log(req.body)
     const bookId = req.params.id;
     const bookObject = req.file ? {
         ...JSON.parse(req.body.book),
