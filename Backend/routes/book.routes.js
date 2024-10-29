@@ -3,7 +3,7 @@ const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
 const router = express.Router();
 
-const bookCtrl = require('../controllers/book');
+const bookCtrl = require('../controllers/book.controller');
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // GET all Books, no Auth required

@@ -47,7 +47,7 @@ server.on('listening', () => {
     const address = server.address();
     const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
     console.log('Listening on ' + bind);
-    console.log(`Swagger docs available at http://localhost:${bind}/api-docs`)
+    console.log(`Swagger docs available at http://localhost:${port}/api-docs`)
 });
 
 server.listen(port);

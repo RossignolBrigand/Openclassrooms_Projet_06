@@ -13,7 +13,7 @@
     "paths": {
         "/auth/signup": {
             "post": {
-                "summary": "Create a new user",
+                "summary": "Hachage du mot de passe de l'utilisateur, ajout de l'utilisateur à la base de données.",
                 "tags": [
                     "Authentication"
                 ],
@@ -57,7 +57,7 @@
         },
         "/auth/login": {
             "post": {
-                "summary": "Authenticate a user",
+                "summary": "Vérification des informations d'identification de l'utilisateur ; renvoie l’_id de l'utilisateur depuis la base de données et un token web JSON signé (contenant également l'_id de l'utilisateur).",
                 "tags": [
                     "Authentication"
                 ],
@@ -118,7 +118,7 @@
         },
         "/books": {
             "get": {
-                "summary": "Get all books",
+                "summary": "Renvoie un tableau de tous les livres de la base de données.",
                 "tags": [
                     "Books"
                 ],
@@ -142,7 +142,7 @@
                 }
             },
             "post": {
-                "summary": "Create a new book",
+                "summary": "Capture et enregistre l'image, analyse le livre transformé en chaîne de caractères, et l'enregistre dans la base de données en définissant correctement son ImageUrl.Initialise la note moyenne du livre à 0 et le rating avec un tableau vide. Remarquez que le corps de la demande initiale est vide ; lorsque Multer est ajouté, il renvoie une chaîne pour le corps de la demande en fonction des données soumises avec le fichier.",
                 "tags": [
                     "Books"
                 ],
@@ -184,7 +184,7 @@
         },
         "/books/bestrating": {
             "get": {
-                "summary": "Get top 3 books by average rating",
+                "summary": "Renvoie un tableau des 3 livres de la base de données ayant la meilleure note moyenne.",
                 "tags": [
                     "Books"
                 ],
@@ -239,7 +239,7 @@
                 }
             },
             "put": {
-                "summary": "Update a book by ID",
+                "summary": "Met à jour le livre avec l'_id fourni. Si une image est téléchargée, elle est capturée, et l’ImageUrl du livre est mise à jour. Si aucun fichier n'est fourni, les informations sur le livre se trouvent directement dans le corps de la requête (req.body.title, req.body.author, etc.). Si un fichier est fourni, le livre transformé en chaîne de caractères se trouve dans req.body.book. Notez que le corps de la demande initiale est vide ; lorsque Multer est ajouté, il renvoie une chaîne du corps de la demande basée sur les données soumises avec le fichier.",
                 "tags": [
                     "Books"
                 ],
@@ -293,7 +293,7 @@
                 }
             },
             "delete": {
-                "summary": "Delete a book by ID",
+                "summary": "Supprime le livre avec l'_id fourni ainsi que l’image associée.",
                 "tags": [
                     "Books"
                 ],
@@ -325,7 +325,7 @@
         },
         "/books/{id}/rating": {
             "post": {
-                "summary": "Add a rating to a book",
+                "summary": "Définit la note pour le user ID fourni. La note doit être comprise entre 0 et 5. L'ID de l'utilisateur et la note doivent être ajoutés au tableau rating afin de ne pas laisser un utilisateur noter deux fois le même livre. Il n’est pas possible de modifier une note. La note moyenne averageRating doit être tenue à jour, et le livre renvoyé en réponse de la requête",
                 "tags": [
                     "Books"
                 ],

@@ -2,11 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('./middleware/cors');
 const swaggerUi = require("swagger-ui-express");
-const swaggerDocs = require("./middleware/swagger");
+const swaggerDocs = require("./swagger.json");
 const app = express();
 
-const bookRoutes = require('./routes/book');
-const userRoutes = require('./routes/user');
+const bookRoutes = require('./routes/book.routes');
+const userRoutes = require('./routes/user.routes');
 const path = require('path');
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
