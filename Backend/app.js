@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('./middleware/cors');
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocs = require("./middleware/swagger");
 const app = express();
 
 const bookRoutes = require('./routes/book');
@@ -31,6 +33,9 @@ app.use('/uploads/images', express.static(path.join(__dirname, 'uploads/images')
 app.use('/api/books', bookRoutes);
 // Auth Routes
 app.use('/api/auth', userRoutes);
+
+//Swagger Docs 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
