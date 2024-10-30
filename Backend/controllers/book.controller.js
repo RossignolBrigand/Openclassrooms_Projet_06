@@ -1,3 +1,4 @@
+const { error } = require('console');
 const Book = require('../models/Book.model');
 const fs = require('fs');
 
@@ -14,7 +15,6 @@ exports.createBook = (req, res, next) => {
         userId: req.auth.userId,
         imageUrl: `${req.protocol}://${req.get('host')}/uploads/images/${req.file.filename}`
     });
-    console.log(book)
     book.save()
         .then(() => res.status(201).json({ book, message: 'Objet enregistré !' }))
         .catch(error => res.status(400).json({ error }));
@@ -104,10 +104,27 @@ exports.updateBook = (req, res, next) => {
 
 // DELETE Removes a specific Book from Database with the provided Id / Auth required
 exports.deleteBook = (req, res, next) => {
-    Book.deleteOne({ _id: req.params.id })
-        .then(() => res.status(200).json({ message: 'Objet supprimé !' }))
-        .catch(error => res.status(400).json({ error }));
+    Book.findOne({ _id: req.params.id })
+        .then(book => {
+            if (!book) return res.status(404).json({ error });
+
+            const ImageUrl = book.imageUrl;
+            const ImageFilename = ImageUrl ? ImageUrl.split('/images/')[1] : null;
+
+            fs.unlink(`uploads/images/${ImageFilename}`, error => {
+                if (error) {
+                    return console.error(error)
+                } else { console.log('Image deleted successfully !') }
+            });
+        })
+        .then(() => {
+            Book.deleteOne({ _id: req.params.id })
+                .then(() => res.status(200).json({ message: 'Objet supprimé !' }))
+                .catch(error => res.status(400).json({ error }));
+        })
+        .catch(error => res.status(500).json({ error }))
 };
+
 
 // GET a specific Book, no Auth required
 exports.getOneBook = (req, res, next) => {

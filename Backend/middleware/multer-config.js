@@ -10,7 +10,11 @@ const MIME_TYPES = {
 };
 
 // Use memory storage with Multer to access the file buffer directly
-const storage = multer.memoryStorage();
+const storage = multer.memoryStorage({
+    limits: {
+        fileSize: 5 * 1024 * 1024,
+    },
+});
 const upload = multer({ storage }).single('image');
 
 // Function to generate a random string for the filename
@@ -30,11 +34,16 @@ module.exports = (req, res, next) => {
             return res.status(400).json({ error: 'Error uploading file' });
         }
 
+        // Check if file is present and handle it in two ways depending on request type
         if (!req.file) {
-            /// return res.status(400).json({ error: 'No file uploaded' });
-            // If no file is present (especially when updating content) multer should not be active and just pass to the next function
-            next();
-            return;
+            if (req.method === "POST") {
+                // Return an error as a file is required in our POST requests
+                return res.status(400).json({ error: 'No file uploaded' });
+            } else {
+                // If no file is present (especially when updating content) multer should not be active and just pass to the next function
+                next();
+                return;
+            }
         }
 
         // Validate file type using MIME_TYPES
@@ -44,6 +53,7 @@ module.exports = (req, res, next) => {
         }
 
         try {
+            // Check for empty spaces and replaces them with a '_' then create an output path for our file 
             const name = req.file.originalname.split(' ').join('_').replace(/\.[^/.]+$/, '');
             const randomString = generateRandomString();
             const outputPath = path.join('uploads/images', `${name + randomString}.webp`);

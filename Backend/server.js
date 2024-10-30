@@ -3,6 +3,8 @@ const app = require('./app');
 
 //-------------------------------------------------------------------------------------------------------------
 
+
+// Ensure the server port is normalized as an integer
 const normalizePort = val => {
     const port = parseInt(val, 10);
 
@@ -15,9 +17,11 @@ const normalizePort = val => {
     return false;
 };
 
+// Sets the port to listen to either the environment variable or a default 
 const port = normalizePort(process.env.PORT || '4000');
 app.set('port', port);
 
+//  Common error handling
 const errorHandler = error => {
     if (error.syscall !== 'listen') {
         throw error;
@@ -38,8 +42,7 @@ const errorHandler = error => {
     }
 };
 
-//----------------------------------------------------------------------------------------------------------------
-
+// Create the server and attaches event listeners
 const server = http.createServer(app);
 
 server.on('error', errorHandler);

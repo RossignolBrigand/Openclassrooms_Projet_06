@@ -1,1 +1,4 @@
 node_modules
+
+// Should be ignored 
+.env

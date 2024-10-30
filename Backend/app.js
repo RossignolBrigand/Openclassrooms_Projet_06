@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('./middleware/cors');
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocs = require("./swagger.json");
+const env = require('dotenv').config();
 const app = express();
 
 const bookRoutes = require('./routes/book.routes');
@@ -10,9 +11,6 @@ const userRoutes = require('./routes/user.routes');
 const path = require('path');
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
-
-//Enable access to (req.body) prop
-app.use(express.json());
 
 // Connect to MongoDB Database 
 mongoose.connect('mongodb+srv://thomaspineau93:crRdZJYsKjiQ4B62@cluster0.5n0xo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
