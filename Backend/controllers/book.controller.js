@@ -63,7 +63,9 @@ exports.updateBook = (req, res, next) => {
         imageUrl: `${req.protocol}://${req.get('host')}/uploads/images/${req.file.filename}`
     } : { ...req.body };
 
+    // Ensure that userId can't be manipulated by the request and remains what is stored within database
     delete bookObject._userId;
+
     Book.findOne({ _id: bookId })
         .then(book => {
             if (book.userId != req.auth.userId) {
@@ -99,7 +101,7 @@ exports.updateBook = (req, res, next) => {
                 .catch(error => res.status(401).json({ error }));
 
         })
-        .catch((error) => res.status(400).json({ error }))
+        .catch((error) => res.status(500).json({ error }))
 };
 
 // DELETE Removes a specific Book from Database with the provided Id / Auth required

@@ -13,7 +13,7 @@ const path = require('path');
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Connect to MongoDB Database 
-mongoose.connect('mongodb+srv://thomaspineau93:crRdZJYsKjiQ4B62@cluster0.5n0xo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+mongoose.connect(`mongodb+srv://${process.env.DB_SECRET}`)
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch(() => console.log('Connexion à MongoDB échouée !'));
 
