@@ -1,9 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('./middleware/cors');
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocs = require("./swagger.json");
-const env = require('dotenv').config();
 const app = express();
 
 const bookRoutes = require('./routes/book.routes');
@@ -13,7 +13,7 @@ const path = require('path');
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Connect to MongoDB Database 
-mongoose.connect(`mongodb+srv://${process.env.DB_SECRET}`)
+mongoose.connect(`${process.env.DB_SECRET}`)
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch(() => console.log('Connexion à MongoDB échouée !'));
 
