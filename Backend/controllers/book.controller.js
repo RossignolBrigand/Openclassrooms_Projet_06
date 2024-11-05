@@ -23,7 +23,7 @@ exports.createBook = (req, res, next) => {
 // POST a rating for a specific Book / Auth required
 exports.rateBook = (req, res, next) => {
     const grade = Number(req.body.rating);
-    const userId = req.body.userId;
+    // const userId = req.body.userId;
 
     // Find the specified book
     Book.findOne({ _id: req.params.id }).exec()
@@ -31,13 +31,13 @@ exports.rateBook = (req, res, next) => {
             if (!book) return res.status(404).json({ message: 'Error: book not found !' })
 
             // Check if user has already rated the book
-            const existingRating = book.ratings.find(r => String(r.userId) === userId);
+            const existingRating = book.ratings.find(r => String(r.userId) === req.auth.userId);
             if (existingRating) {
                 return res.status(403).json({ message: 'You have already rated this book !' })
             }
 
             // Add the new rating 
-            const newRating = { userId: userId, grade: grade };
+            const newRating = { userId: req.auth.userId, grade: grade };
             book.ratings.push(newRating);
 
             // Update the average rating
@@ -64,13 +64,13 @@ exports.updateBook = (req, res, next) => {
     } : { ...req.body };
 
     // Ensure that userId can't be manipulated by the request and remains what is stored within database
+    delete bookObject._id
     delete bookObject._userId;
 
     Book.findOne({ _id: bookId })
         .then(book => {
             if (book.userId != req.auth.userId) {
-                res.status(403).json({ message: 'Unauthorized request' });
-                return;
+                return res.status(403).json({ message: 'Unauthorized request' });
             }
 
             // Check if all fields in bookObject are the same as those in book
@@ -83,8 +83,7 @@ exports.updateBook = (req, res, next) => {
                 return res.status(200).json({ message: 'No changes detected' });
             }
 
-            const oldImageUrl = book.imageUrl;
-            const oldImageFilename = oldImageUrl ? oldImageUrl.split('/images/')[1] : null;
+            const oldImageFilename = book.imageUrl ? book.imageUrl.split('/images/')[1] : null;
 
             Book.updateOne({ _id: bookId }, { ...bookObject, _id: bookId })
                 .then(() => {
@@ -99,7 +98,6 @@ exports.updateBook = (req, res, next) => {
                     res.status(200).json({ message: 'Objet modifié !' })
                 })
                 .catch(error => res.status(401).json({ error }));
-
         })
         .catch((error) => res.status(500).json({ error }))
 };

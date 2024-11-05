@@ -1,4 +1,4 @@
 node_modules
 
-// Should be ignored 
-.env
+# Should be ignored for security purposes
+#.env
