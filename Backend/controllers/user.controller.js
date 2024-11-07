@@ -8,7 +8,15 @@ const User = require('../models/User.model');
 
 // Take the user password then hash it and store the hash as the user's password
 exports.signup = (req, res, next) => {
-    bcrypt.hash(req.body.password, 10)
+    const password = req.body.password;
+
+    // Check if the password is within the 72-byte limit
+    if (Buffer.byteLength(password, 'utf-8') > 72) {
+        throw new Error('400: Password must be 72 bytes or fewer');
+        // return res.status(400).json({ error: 'Password must be 72 bytes or fewer' });
+    }
+
+    bcrypt.hash(password, 10)
         .then(hash => {
             const user = new User({
                 email: req.body.email,
