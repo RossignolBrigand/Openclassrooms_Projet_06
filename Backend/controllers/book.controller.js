@@ -28,12 +28,22 @@ exports.rateBook = (req, res, next) => {
     // Find the specified book
     Book.findOne({ _id: req.params.id }).exec()
         .then(book => {
-            if (!book) return res.status(404).json({ message: 'Error: book not found !' })
+
+            if (book.userId != req.auth.userId) {
+                return res.status(403).json({ message: 'Unauthorized request' });
+            }
+
+            if (!book) {
+                throw new Error('404: Book not found !');
+                // return res.status(404).json({ message: 'Error: book not found !' })
+            }
 
             // Check if user has already rated the book
             const existingRating = book.ratings.find(r => String(r.userId) === req.auth.userId);
             if (existingRating) {
-                return res.status(403).json({ message: 'You have already rated this book !' })
+                //  request could not be completed due to a conflict with the current state of the resource
+                throw new Error('409: You have already rated this book !');
+                // return res.status(409).json({ message: 'You have already rated this book !' })
             }
 
             // Add the new rating 
@@ -58,6 +68,8 @@ exports.rateBook = (req, res, next) => {
 // PUT Updates a specific Book from the provided ID / Auth required
 exports.updateBook = (req, res, next) => {
     const bookId = req.params.id;
+
+    // Check if a new image file is being uploaded
     const bookObject = req.file ? {
         ...JSON.parse(req.body.book),
         imageUrl: `${req.protocol}://${req.get('host')}/uploads/images/${req.file.filename}`
@@ -90,7 +102,7 @@ exports.updateBook = (req, res, next) => {
                     if (req.file && oldImageFilename) {
                         fs.unlink(`uploads/images/${oldImageFilename}`, error => {
                             if (error) {
-                                console.error({ error })
+                                throw new Error(error);
                             }
                             else { console.log('Old image deleted successfully !') }
                         })
@@ -106,7 +118,13 @@ exports.updateBook = (req, res, next) => {
 exports.deleteBook = (req, res, next) => {
     Book.findOne({ _id: req.params.id })
         .then(book => {
-            if (!book) return res.status(404).json({ error });
+
+            if (book.userId != req.auth.userId) {
+                return res.status(403).json({ message: 'Unauthorized request' });
+            }
+            if (!book) {
+                return res.status(404).json({ error })
+            };
 
             const ImageUrl = book.imageUrl;
             const ImageFilename = ImageUrl ? ImageUrl.split('/images/')[1] : null;
@@ -142,7 +160,7 @@ exports.getTopBooks = async (req, res) => {
 
         res.status(200).json(topBooks);
     } catch (error) {
-        res.status(500).json({ message: 'Error retrieving top books', error });
+        res.status(500).json({ error });
     }
 };
 
