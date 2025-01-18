@@ -13,7 +13,7 @@ exports.signup = (req, res, next) => {
     // Check if the password is within the 72-byte limit
     if (Buffer.byteLength(password, 'utf-8') > 72) {
         // throw new Error('400: Password must be 72 bytes or fewer');
-        return res.status(400).json({ error: 'Password must be 72 bytes or fewer' });
+        return res.status(400).json({ error: 'Le mot de passe est trop long !' });
     }
 
     bcrypt.hash(password, 10)

@@ -4,16 +4,31 @@ Ce projet contient une application react pour la gestion du frontend d'un site d
 
 ## Technologies
 
-  Express
-  NodeJS
-  MongoDB
-  Swagger
-  
+Express
+NodeJS
+MongoDB
+Swagger
+
 ## How to use
 
-Go to frontend folder (the app folder) and run npm start. The page should load on http://localhost:3000/
+### Go to frontend folder (the app folder) and run npm start.
 
-Go to backend folder and run nodemon server. The server should load on port 4000. 
+```bash
+npm install
+npm start
+```
+
+The page should load on http://localhost:3000/
+
+### Go to backend folder and run
+
+```bash
+npm install
+nodemon server
+```
+
+The server should load on port 4000.
+
 You can also access Swagger documentation on server start.
 
 ## Contribute to the project
@@ -26,4 +41,4 @@ Thomas PINEAU
 
 ## Licensing
 
-Creative Commons
+[MIT]
